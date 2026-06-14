@@ -1,0 +1,4 @@
+numpy~=2.4.6
+pandas~=3.0.3
+h5py~=3.16.0
+madrigalWeb~=3.3.7
