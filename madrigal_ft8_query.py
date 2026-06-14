@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+"""
+Script written mostly by Anthropic Claude AI Sonnet v4.6 following iterations with Gwyn GRiffiths G3ZIL
+Query the CEDAR Madrigal database (instrument 8308 - Amateur Radio Signal Report)
+for FT8 spots on 10 May 2026.
+
+The Madrigal server refuses isprint() filtering on files > 200 MB, so we
+must download the full HDF5 file for the whole day. However, we avoid loading it all into
+memory by using h5py to stream through it in chunks, applying the time
+and mode filters as we go.
+
+# KNOWN GOTCHAS (learned the hard way):
+# - HDF5 column names are lowercase (ut1_unix, smode, tfreq, sn, etc.)
+# - getExperimentFileParameters() returns uppercase — ignore for HDF5 access
+# - isprint() silently rejects files > 200 MB — must use downloadFile()
+# - Epoch values must be computed dynamically (hardcoded values caused year-off bug)
+# - The 1200-1500 UTC window contains ~60-70M FT8 rows — must write CSV per chunk
+
+Peak RAM usage is controlled by CHUNK_SIZE (rows per chunk), not file size.
+
+Requirements:
+    pip install madrigalWeb h5py numpy pandas
+
+Usage:
+    python madrigal_ft8_query.py
+
+Output:
+    ft8_10may2026_1200_1500utc.csv
+"""
+
+import sys
+import os
+import datetime
+import numpy as np
+import pandas as pd
+import h5py
+
+# ---------------------------------------------------------------------------
+# Configuration — edit these before running
+# ---------------------------------------------------------------------------
+
+MADRIGAL_URL     = "https://cedar.openmadrigal.org"
+INSTRUMENT_CODE  = 8308  # This is the code for amateur radio reports:
+			 # WSPR from wsprnet.org, CW from Reverse Beacon Network, FT8 from pskreporter
+
+USER_FULLNAME    = "Gwyn Griffiths"                 # Put your credentials here. No registration needed
+USER_EMAIL       = "gxgriffiths@virginmedia.com"    # only needed to give Madrigal some information on users
+USER_AFFILIATION = "HamSCI"
+
+HDF5_LOCAL  = "rsd2026-05-10.hdf5"                  # This contains all reports for all Ham modes for a day, may be 8 GB
+CSV_OUTPUT  = "ft8_10may2026_1200_1500utc.csv"      # Edit names to suit your date/time. CSV file for 3 hr was ~ 1.7 GB
+
+CHUNK_SIZE  = 500_000   			    # rows processed at a time — keeps RAM low
+
+# -----------
+# Time window
+# -----------
+
+YEAR=2026         # Edit these to suit your needs. Note minutes and seconds hard coded to zero
+MONTH=5
+DAY=10
+HOUR_START=12
+HOUR_END=15
+
+UTC      = datetime.timezone.utc
+DT_START = datetime.datetime(YEAR, MONTH, DAY, HOUR_START, 0, 0, tzinfo=UTC) # Edit these to your own needs
+DT_END   = datetime.datetime(YEAR, MONTH, DAY, HOUR_END, 0, 0, tzinfo=UTC)
+
+#-------------------------------------------------------------------------------
+
+START_UT1_UNIX = int(DT_START.timestamp())
+END_UT1_UNIX   = int(DT_END.timestamp())
+
+print(f"Time window : {DT_START.isoformat()} → {DT_END.isoformat()}")
+print(f"Unix epochs : {START_UT1_UNIX} → {END_UT1_UNIX}")
+
+# ---------------------------------------------------------------------------
+# Step 1 — Download the full HDF5 file (only if not already present)
+# ---------------------------------------------------------------------------
+
+try:
+    import madrigalWeb.madrigalWeb as mw
+except ImportError:
+    sys.exit("ERROR: madrigalWeb not found.\nInstall with: pip install madrigalWeb")
+
+if os.path.exists(HDF5_LOCAL):
+    print(f"\nUsing cached file: {HDF5_LOCAL} "
+          f"({os.path.getsize(HDF5_LOCAL)/1e9:.2f} GB)")
+else:
+    print(f"\nConnecting to {MADRIGAL_URL} ...")
+    madDB = mw.MadrigalData(MADRIGAL_URL)
+
+    print("Searching for experiment ...")
+    experiments = madDB.getExperiments(
+        INSTRUMENT_CODE,
+        YEAR, MONTH, DAY, 0, 0, 0,
+        YEAR, MONTH, DAY, 23, 59, 59
+    )
+    if not experiments:
+        sys.exit("No experiments found. Data may not yet be ingested (~1 month lag).")
+
+    files = madDB.getExperimentFiles(experiments[0].id)
+    if not files:
+        sys.exit("No files found for this experiment.")
+
+    file_rec = files[0]
+    print(f"Downloading: {file_rec.name}")
+    print("(This may take many minutes for a ~8 GB file ...)")
+
+    madDB.downloadFile(
+        file_rec.name, HDF5_LOCAL,
+        USER_FULLNAME, USER_EMAIL, USER_AFFILIATION,
+        format="hdf5"
+    )
+    print(f"Download complete ({os.path.getsize(HDF5_LOCAL)/1e9:.2f} GB).")
+
+# ---------------------------------------------------------------------------
+# Step 2 — Stream through the HDF5 file in chunks, filtering as we go
+#
+# h5py supports reading arbitrary row slices from an HDF5 dataset without
+# loading the whole thing. We read CHUNK_SIZE rows at a time, apply the
+# UT1_UNIX time filter and SMODE == "FT8" filter, and accumulate only
+# the matching rows. Peak RAM ~ CHUNK_SIZE rows, not the full file.
+# ---------------------------------------------------------------------------
+
+total_ft8 = 0
+header_written = False
+csv_fh = open(CSV_OUTPUT, "w", buffering=1)
+
+with h5py.File(HDF5_LOCAL, "r") as f:
+
+    layout = f["Data/Table Layout"]
+    total_rows = layout.shape[0]
+    print(f"Total rows in file: {total_rows:,}")
+
+    # Confirm required columns exist (HDF5 stores names in lowercase)
+    cols = layout.dtype.names
+    for required in ("ut1_unix", "smode"):
+        if required not in cols:
+            csv_fh.close()
+            sys.exit(f"Required column '{required}' not found. "
+                     f"Available: {cols}")
+
+    n_chunks = (total_rows + CHUNK_SIZE - 1) // CHUNK_SIZE
+
+    for i in range(n_chunks):
+        row_start = i * CHUNK_SIZE
+        row_end   = min(row_start + CHUNK_SIZE, total_rows)
+
+        chunk = layout[row_start:row_end]
+
+        # --- Time filter ---
+        ut1 = chunk["ut1_unix"].astype(np.float64)
+        time_mask = (ut1 >= START_UT1_UNIX) & (ut1 < END_UT1_UNIX)
+
+        if not np.any(time_mask):
+            if i % 10 == 0:
+                pct = 100 * row_end / total_rows
+                print(f"  chunk {i+1}/{n_chunks} ({pct:.0f}%) — no time matches")
+            continue
+
+        chunk_time = chunk[time_mask]
+
+        # --- Mode filter ---
+        smode = np.char.decode(chunk_time["smode"], "utf-8")
+        smode = np.char.strip(smode)
+        mode_mask = np.char.upper(smode) == "FT8"
+
+        chunk_ft8 = chunk_time[mode_mask]
+        n_ft8 = len(chunk_ft8)
+
+        if n_ft8 > 0:
+            row_dict = {}
+            for col in chunk_ft8.dtype.names:
+                col_data = chunk_ft8[col]
+                if col_data.dtype.kind == "S":
+                    col_data = np.char.decode(col_data, "utf-8")
+                    col_data = np.char.strip(col_data)
+                row_dict[col] = col_data
+
+            df_chunk = pd.DataFrame(row_dict)
+
+            # Select wanted columns
+            wanted = ["ut1_unix", "smode", "tfreq", "sn",
+                      "txlat", "txlon", "rxlat", "rxlon",
+                      "pthlen", "call_sign_tx", "call_sign_rx"]
+            present = [c for c in wanted if c in df_chunk.columns]
+            df_chunk = df_chunk[present]
+
+            for col in ["ut1_unix", "tfreq", "sn", "txlat", "txlon",
+                        "rxlat", "rxlon", "pthlen"]:
+                if col in df_chunk.columns:
+                    df_chunk[col] = pd.to_numeric(df_chunk[col], errors="coerce")
+
+            df_chunk.insert(0, "datetime_utc",
+                            pd.to_datetime(df_chunk["ut1_unix"], unit="s", utc=True))
+
+            # Write to CSV immediately — no accumulation in RAM
+            df_chunk.to_csv(csv_fh, index=False, header=not header_written)
+            header_written = True
+            csv_fh.flush()
+            total_ft8 += n_ft8
+
+        pct = 100 * row_end / total_rows
+        print(f"  chunk {i+1}/{n_chunks} ({pct:.0f}%) — "
+              f"{np.sum(time_mask):,} in window, "
+              f"{n_ft8:,} FT8 this chunk, "
+              f"{total_ft8:,} total written")
+
+csv_fh.close()
+
+# ---------------------------------------------------------------------------
+# Step 3 — Report
+# ---------------------------------------------------------------------------
+
+if total_ft8 == 0:
+    sys.exit("No FT8 records found in the 1200-1500 UTC window.")
+
+print(f"\nTotal FT8 records written: {total_ft8:,}")
+
+# ---------------------------------------------------------------------------
+# Step 4 — Print summary statistics from the saved CSV
+# (read back in chunks to avoid loading the whole thing)
+# ---------------------------------------------------------------------------
+
+print("\n--- Summary ---")
+print(f"Date        : 10 May 2026")
+print(f"Time window : 1200-1500 UTC")
+print(f"Mode        : FT8 only")
+print(f"Total spots : {total_ft8:,}")
+
+# Read back CSV in chunks just to compute stats without loading all into RAM
+tfreq_vals, sn_vals, pthlen_vals = [], [], []
+for chunk in pd.read_csv(CSV_OUTPUT, chunksize=500_000,
+                         usecols=lambda c: c in ("tfreq", "sn", "pthlen")):
+    if "tfreq"  in chunk: tfreq_vals.append(chunk["tfreq"].dropna().values)
+    if "sn"     in chunk: sn_vals.append(chunk["sn"].dropna().values)
+    if "pthlen" in chunk: pthlen_vals.append(chunk["pthlen"].dropna().values)
+
+if tfreq_vals:
+    print(f"\nFrequency (Hz):\n{pd.Series(np.concatenate(tfreq_vals)).describe()}")
+if sn_vals:
+    print(f"\nSNR (dB):\n{pd.Series(np.concatenate(sn_vals)).describe()}")
+if pthlen_vals:
+    print(f"\nPath length (km):\n{pd.Series(np.concatenate(pthlen_vals)).describe()}")
+
+print(f"\nFirst 5 rows:\n{pd.read_csv(CSV_OUTPUT, nrows=5).to_string()}")
