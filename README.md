@@ -25,6 +25,11 @@ python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ```
 ### madrigal_ft8_query.py
+Execute using:
+```
+python3 madrigal_ft8_query.py
+```
+
 This is a rough and ready python script to query the Madrigal database at https://cedar.openmadrigal.org to obtain FT8 data between user-selected hours on a user-selected day. The user enters those parameters by editing the script (e.g. using nano). The lines to edit can be found in the Configuration block near the top of the script.
 
 Note that data in hdf5 format will have to be downloaded for the whole day to a) extract FT8 and b) extract the time period required into a csv file. The downloaded file may be about 8 GB. It will take time. There appears to be no way of sub-selecting prior to download where a file is over 200 MB.
