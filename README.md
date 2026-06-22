@@ -2,7 +2,7 @@
 This software has been tested on Linux Ubuntu 24.04.
 
 ### Download
-You need to clone the package from github.com and run the software in the madrigal_fetch sub-directory. 
+You need to clone the package from github.com and run the software in the data_fetch sub-directory. 
 ```
 cd ~
 git clone https://github.com/g3zil/data_fetch.git
@@ -16,7 +16,7 @@ git pull
 
 ## Requirements
 ### Externally managed environment
-The code has been tested with python 3.12.3 on Ubuntu Linux 24.04 LTS. A virtual environment is created and activated in the directory ~/madrigal_fetch/.venv, the latest version of pip is installed, and the required modules installed. Check your python3 version and use instead of 3.12 in the first line below if appropriate.
+The code has been tested with python 3.12.3 on Ubuntu Linux 24.04 LTS. A virtual environment is created and activated in the directory ~/data_fetch/.venv, the latest version of pip is installed, and the required modules installed. Check your python3 version and use instead of 3.12 in the first line below if appropriate.
 ```
 sudo apt install python3.12-venv
 python3 -m venv .venv
