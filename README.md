@@ -5,10 +5,10 @@ This software has been tested on Linux Ubuntu 24.04.
 You need to clone the package from github.com and run the software in the madrigal_fetch sub-directory. 
 ```
 cd ~
-git clone https://github.com/g3zil/madrigal_fetch.git
-cd ~/madrigal_fetch
+git clone https://github.com/g3zil/data_fetch.git
+cd ~/data_fetch
 ```
-Execute all further commands in the ~/madrigal_fetch directory.
+Execute all further commands in the ~/data_fetch directory.
 Updates can be downloaded with:
 ```
 git pull
