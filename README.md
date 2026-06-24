@@ -25,12 +25,12 @@ python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ```
 ### madrigal_ft8_query.py
+This is a rough and ready python script to query the Madrigal database at https://cedar.openmadrigal.org to obtain FT8 data between user-selected hours on a user-selected day. The user enters those parameters by editing the script (e.g. using nano). The lines to edit can be found in the Configuration block near the top of the script.
+
 Execute using:
 ```
 python3 madrigal_ft8_query.py
 ```
-
-This is a rough and ready python script to query the Madrigal database at https://cedar.openmadrigal.org to obtain FT8 data between user-selected hours on a user-selected day. The user enters those parameters by editing the script (e.g. using nano). The lines to edit can be found in the Configuration block near the top of the script.
 
 Note that data in hdf5 format will have to be downloaded for the whole day to a) extract FT8 and b) extract the time period required into a csv file. The downloaded file may be about 8 GB. It will take time. There appears to be no way of sub-selecting prior to download where a file is over 200 MB.
 
@@ -43,4 +43,12 @@ datetime_utc,ut1_unix,smode,tfreq,sn,txlat,txlon,rxlat,rxlon,pthlen,call_sign_tx
 
 Linux tools, e.g. grep, can be used to extract lines matching a required band, e.g. grep ",1407" for 14 MHz, or a callsign.
 
+### sdo_eve_euv_extract.py
+This is a rough and ready python script to extract soft X-ray and eUV Level 1 data from five channels for the NASA Solar Dynamics Observatory EUV Variability Experiment (EVE) satellite. Level 1 data is at 4 Hz cadence. Full details, and data access, are via links on the NASA/University of Colorado SDO-EVE [page](https://lasp.colorado.edu/eve/data_access/index.html)). The user has to find and download the *.fit.gz file for the day of interest and copy into the ~/data_fetch directory to be decoded. The file name is the first command line parameter and the cadence to average to is the seond (in seconds).
+
+Execute using:
+```
+python3 sdo_eve_euv_extract.py esp_L1_2026130_008.fit.gz 10
+```
+The output is a csv file with the same root name as the raw data file.
 
