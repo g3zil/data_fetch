@@ -25,7 +25,7 @@ python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ```
 ### madrigal_ft8_query.py
-This is a rough and ready python script to query the Madrigal database at https://cedar.openmadrigal.org to obtain FT8 data between user-selected hours on a user-selected day. The user enters those parameters by editing the script (e.g. using nano). The lines to edit can be found in the Configuration block near the top of the script.
+This is a rough and ready python script to query the Madrigal database at https://cedar.openmadrigal.org to obtain FT8 data between user-selected hours on a user-selected day. The user enters those parameters by editing the ft8.ini file in the config subdirectory. Also in ft8.ini the users gives their credentials.
 
 Execute using:
 ```
