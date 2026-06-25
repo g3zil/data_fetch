@@ -85,7 +85,6 @@ try:
     import madrigalWeb.madrigalWeb as mw
 except ImportError:
     sys.exit("ERROR: madrigalWeb not found.\nInstall with: pip install madrigalWeb")
-sys.exit()
 
 if os.path.exists(HDF5_LOCAL):
     print(f"\nUsing cached file: {HDF5_LOCAL} "
