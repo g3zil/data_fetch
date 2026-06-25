@@ -59,7 +59,7 @@ HOUR_END=config['datetime'].getint('HOUR_END')
 #------------------------------------------------------------------------------
 # Remaining set-up
 HDF5_LOCAL  = "rsd"+YEAR+"-"+MONTH+"-"+DAY+".hdf5"     # This output file contains all reports for all Ham modes for a day, may be 8 GB
-CSV_OUTPUT  = "ft8-"+YEAR+"-"+MONTH+"-"+DAY+"-"HOUR_START+"00-"+HOUR_END+"00.csv"      # CSV file for 3 hr was ~ 1.7 GB
+CSV_OUTPUT  = "ft8-"+YEAR+"-"+MONTH+"-"+DAY+"-"+HOUR_START+"00-"+HOUR_END+"00.csv"      # CSV file for 3 hr was ~ 1.7 GB
 
 MADRIGAL_URL     = "https://cedar.openmadrigal.org"
 INSTRUMENT_CODE  = 8308  # This is the code for amateur radio reports:
