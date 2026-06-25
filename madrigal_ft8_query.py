@@ -34,36 +34,39 @@ import datetime
 import numpy as np
 import pandas as pd
 import h5py
+import configparser
+import ast
+import os
 
 # ---------------------------------------------------------------------------
-# Configuration — edit these before running
+# Configuration from ./config/ft8.ini
 # ---------------------------------------------------------------------------
+config_file = "./config/ft8.ini"
+config = configparser.ConfigParser()
+config.read(config_file)           # 
+
+USER_FULLNAME=config['credentials'].get('USER_FULLNAME')
+USER_EMAIL=config['credentials'].get('USER_EMAIL')
+USER_AFFILIATION=config['credentials'].get('USER_AFFILIATION')
+
+# Time window
+YEAR=config['datetime'].getint('YEAR')
+MONTH=config['datetime'].getint('MONTH')
+DAY=config['datetime'].getint('DAY')
+HOUR_START=config['datetime'].getint('HOUR_START')
+HOUR_END=config['datetime'].getint('HOUR_END')
+
+#------------------------------------------------------------------------------
+# Remaining set-up
+HDF5_LOCAL  = "rsd"+YEAR+"-"+MONTH+"-"+DAY+".hdf5"     # This output file contains all reports for all Ham modes for a day, may be 8 GB
+CSV_OUTPUT  = "ft8-"+YEAR+"-"+MONTH+"-"+DAY+"-"HOUR_START+"00-"+HOUR_END+"00.csv"      # CSV file for 3 hr was ~ 1.7 GB
 
 MADRIGAL_URL     = "https://cedar.openmadrigal.org"
 INSTRUMENT_CODE  = 8308  # This is the code for amateur radio reports:
-			 # WSPR from wsprnet.org, CW from Reverse Beacon Network, FT8 from pskreporter
-
-USER_FULLNAME    = "Gwyn Griffiths"                 # Put your credentials here. No registration needed
-USER_EMAIL       = "gxgriffiths@virginmedia.com"    # only needed to give Madrigal some information on users
-USER_AFFILIATION = "HamSCI"
-
-HDF5_LOCAL  = "rsd2026-05-10.hdf5"                  # This contains all reports for all Ham modes for a day, may be 8 GB
-CSV_OUTPUT  = "ft8_10may2026_1200_1500utc.csv"      # Edit names to suit your date/time. CSV file for 3 hr was ~ 1.7 GB
-
+			             # WSPR from wsprnet.org, CW from Reverse Beacon Network, FT8 from pskreporter
 CHUNK_SIZE  = 500_000   			    # rows processed at a time — keeps RAM low
-
-# -----------
-# Time window
-# -----------
-
-YEAR=2026         # Edit these to suit your needs. Note minutes and seconds hard coded to zero
-MONTH=5
-DAY=10
-HOUR_START=12
-HOUR_END=15
-
 UTC      = datetime.timezone.utc
-DT_START = datetime.datetime(YEAR, MONTH, DAY, HOUR_START, 0, 0, tzinfo=UTC) # Edit these to your own needs
+DT_START = datetime.datetime(YEAR, MONTH, DAY, HOUR_START, 0, 0, tzinfo=UTC)
 DT_END   = datetime.datetime(YEAR, MONTH, DAY, HOUR_END, 0, 0, tzinfo=UTC)
 
 #-------------------------------------------------------------------------------
@@ -82,6 +85,7 @@ try:
     import madrigalWeb.madrigalWeb as mw
 except ImportError:
     sys.exit("ERROR: madrigalWeb not found.\nInstall with: pip install madrigalWeb")
+sys.exit()
 
 if os.path.exists(HDF5_LOCAL):
     print(f"\nUsing cached file: {HDF5_LOCAL} "
