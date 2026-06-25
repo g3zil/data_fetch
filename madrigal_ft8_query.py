@@ -93,7 +93,7 @@ else:
     print(f"\nConnecting to {MADRIGAL_URL} ...")
     madDB = mw.MadrigalData(MADRIGAL_URL)
 
-    print("Searching for experiment ...")
+    print("Connected: Searching for experiment ...")
     experiments = madDB.getExperiments(
         INSTRUMENT_CODE,
         YEAR, MONTH, DAY, 0, 0, 0,
@@ -107,7 +107,7 @@ else:
         sys.exit("No files found for this experiment.")
 
     file_rec = files[0]
-    print(f"Downloading: {file_rec.name}")
+    print(f"Experiment found: Downloading: {file_rec.name}")
     print("(This may take many minutes for a ~8 GB file ...)")
 
     madDB.downloadFile(
