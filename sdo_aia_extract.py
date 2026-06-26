@@ -14,6 +14,7 @@ import datetime
 import drms
 import pandas as pd
 
+# SDO AIA data is at the Joint Science Operations Centre: https://docs.sunpy.org/en/latest/tutorial/acquiring_data/jsoc.html
 # 1. Initialize the JSOC/DRMS client
 client = drms.Client()
 
