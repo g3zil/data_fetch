@@ -41,7 +41,7 @@ import ast
 import os
 
 # ---------------------------------------------------------------------------
-# Configuration from ./config/8038.ini
+# Configuration from ./config/8308.ini
 # ---------------------------------------------------------------------------
 config_file = "./config/8308.ini"
 config = configparser.ConfigParser()
@@ -131,7 +131,7 @@ else:
 # the matching rows. Peak RAM ~ CHUNK_SIZE rows, not the full file.
 # ---------------------------------------------------------------------------
 
-total_8038 = 0
+total_8308 = 0
 header_written = False
 csv_fh = open(CSV_OUTPUT, "w", buffering=1)
 
