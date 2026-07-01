@@ -20,7 +20,8 @@ Peak RAM usage is controlled by CHUNK_SIZE (rows per chunk), not file size.
 
 Requirements:
     pip install madrigalWeb h5py numpy pandas
-	and a 8308.ini configuration file in the ./config directory, see original example
+	
+    and a 8308.ini configuration file in the ./config directory, see original example
 
 Usage:
     python madrigal_8308_query.py
@@ -40,7 +41,7 @@ import ast
 import os
 
 # ---------------------------------------------------------------------------
-# Configuration from ./config/ft8.ini
+# Configuration from ./config/8038.ini
 # ---------------------------------------------------------------------------
 config_file = "./config/8308.ini"
 config = configparser.ConfigParser()
@@ -126,11 +127,11 @@ else:
 #
 # h5py supports reading arbitrary row slices from an HDF5 dataset without
 # loading the whole thing. We read CHUNK_SIZE rows at a time, apply the
-# UT1_UNIX time filter and SMODE == "FT8" filter, and accumulate only
+# UT1_UNIX time filter and SMODE == "FT8" or "WSPR" or "CW" filter, and accumulate only
 # the matching rows. Peak RAM ~ CHUNK_SIZE rows, not the full file.
 # ---------------------------------------------------------------------------
 
-total_ft8 = 0
+total_8038 = 0
 header_written = False
 csv_fh = open(CSV_OUTPUT, "w", buffering=1)
 
@@ -171,15 +172,15 @@ with h5py.File(HDF5_LOCAL, "r") as f:
         # --- Mode filter ---
         smode = np.char.decode(chunk_time["smode"], "utf-8")
         smode = np.char.strip(smode)
-        mode_mask = np.char.upper(smode) == "FT8"
+        mode_mask = np.char.upper(smode) == MODE
 
-        chunk_ft8 = chunk_time[mode_mask]
-        n_ft8 = len(chunk_ft8)
+        chunk_8038 = chunk_time[mode_mask]
+        n_8038 = len(chunk_8308)
 
-        if n_ft8 > 0:
+        if n_8038 > 0:
             row_dict = {}
-            for col in chunk_ft8.dtype.names:
-                col_data = chunk_ft8[col]
+            for col in chunk_8038.dtype.names:
+                col_data = chunk_8308[col]
                 if col_data.dtype.kind == "S":
                     col_data = np.char.decode(col_data, "utf-8")
                     col_data = np.char.strip(col_data)
@@ -206,13 +207,13 @@ with h5py.File(HDF5_LOCAL, "r") as f:
             df_chunk.to_csv(csv_fh, index=False, header=not header_written)
             header_written = True
             csv_fh.flush()
-            total_ft8 += n_ft8
+            total_8038 += n_8038
 
         pct = 100 * row_end / total_rows
         print(f"  chunk {i+1}/{n_chunks} ({pct:.0f}%) — "
               f"{np.sum(time_mask):,} in window, "
-              f"{n_ft8:,} FT8 this chunk, "
-              f"{total_ft8:,} total written")
+              f"{n_8038:,} mode this chunk, "
+              f"{total_8308:,} total written")
 
 csv_fh.close()
 
@@ -220,10 +221,10 @@ csv_fh.close()
 # Step 3 — Report
 # ---------------------------------------------------------------------------
 
-if total_ft8 == 0:
-    sys.exit("No FT8 records found in the 1200-1500 UTC window.")
+if total_8308 == 0:
+    sys.exit("No selected mode records found in the 1200-1500 UTC window.")
 
-print(f"\nTotal FT8 records written: {total_ft8:,}")
+print(f"\nTotal selected mode records written: {total_8308:,}")
 
 # ---------------------------------------------------------------------------
 # Step 4 — Print summary statistics from the saved CSV
@@ -233,8 +234,8 @@ print(f"\nTotal FT8 records written: {total_ft8:,}")
 print("\n--- Summary ---")
 print(f"Date        : 10 May 2026")
 print(f"Time window : 1200-1500 UTC")
-print(f"Mode        : FT8 only")
-print(f"Total spots : {total_ft8:,}")
+print(f"Mode        :", MODE)
+print(f"Total spots : {total_8308:,}")
 
 # Read back CSV in chunks just to compute stats without loading all into RAM
 tfreq_vals, sn_vals, pthlen_vals = [], [], []
