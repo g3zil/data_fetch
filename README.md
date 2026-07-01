@@ -29,7 +29,7 @@ This is a rough and ready python script to query the Madrigal database at https:
 
 Execute using:
 ```
-python3 madrigal_8038_query.py
+python3 madrigal_8308_query.py
 ```
 
 Note that data in hdf5 format will have to be downloaded for the whole day to a) extract FT8 and b) extract the time period required into a csv file. The downloaded file may be about 8 GB. It will take time. There appears to be no way of sub-selecting prior to download where a file is over 200 MB.
