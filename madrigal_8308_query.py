@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Script written mostly by Anthropic Claude AI Sonnet v4.6 following iterations with Gwyn GRiffiths G3ZIL
-Query the CEDAR Madrigal database (instrument 8308 - Amateur Radio Signal Report)
-for FT8 spots on 10 May 2026.
+Script written mostly by Anthropic Claude AI Sonnet v4.6 following iterations with Gwyn Griffiths G3ZIL
+Query the CEDAR Madrigal database (Instrument 8308 - Amateur Radio Signal Report)
+for FT8, WSPR or CW spots.
 
 The Madrigal server refuses isprint() filtering on files > 200 MB, so we
 must download the full HDF5 file for the whole day. However, we avoid loading it all into
@@ -20,12 +20,13 @@ Peak RAM usage is controlled by CHUNK_SIZE (rows per chunk), not file size.
 
 Requirements:
     pip install madrigalWeb h5py numpy pandas
+	and a 8308.ini configuration file in the ./config directory, see original example
 
 Usage:
-    python madrigal_ft8_query.py
+    python madrigal_8308_query.py
 
-Output:
-    ft8_10may2026_1200_1500utc.csv
+Output csv file with name constructed from:
+    MODE-YEAR-MONTH-DAY-HOUR_START00-HOUR_END00.csv
 """
 
 import sys
@@ -41,7 +42,7 @@ import os
 # ---------------------------------------------------------------------------
 # Configuration from ./config/ft8.ini
 # ---------------------------------------------------------------------------
-config_file = "./config/ft8.ini"
+config_file = "./config/8308.ini"
 config = configparser.ConfigParser()
 config.read(config_file)           # 
 
@@ -56,10 +57,13 @@ DAY=config['datetime'].getint('DAY')
 HOUR_START=config['datetime'].getint('HOUR_START')
 HOUR_END=config['datetime'].getint('HOUR_END')
 
+# Mode parameters
+MODE=config['mode'].get('MODE')
+
 #------------------------------------------------------------------------------
 # Remaining set-up
 HDF5_LOCAL  = "rsd"+str(YEAR)+"-"+str(MONTH)+"-"+str(DAY)+".hdf5"     # This output file contains all reports for all Ham modes for a day, may be 8 GB
-CSV_OUTPUT  = "ft8-"+str(YEAR)+"-"+str(MONTH)+"-"+str(DAY)+"-"+str(HOUR_START)+"00-"+str(HOUR_END)+"00.csv"      # CSV file for 3 hr was ~ 1.7 GB
+CSV_OUTPUT  = MODE+"-"+str(YEAR)+"-"+str(MONTH)+"-"+str(DAY)+"-"+str(HOUR_START)+"00-"+str(HOUR_END)+"00.csv"      # CSV file for 3 hr was ~ 1.7 GB
 
 MADRIGAL_URL     = "https://cedar.openmadrigal.org"
 INSTRUMENT_CODE  = 8308  # This is the code for amateur radio reports:
