@@ -174,12 +174,12 @@ with h5py.File(HDF5_LOCAL, "r") as f:
         smode = np.char.strip(smode)
         mode_mask = np.char.upper(smode) == MODE
 
-        chunk_8038 = chunk_time[mode_mask]
-        n_8038 = len(chunk_8308)
+        chunk_8308 = chunk_time[mode_mask]
+        n_8308 = len(chunk_8308)
 
-        if n_8038 > 0:
+        if n_8308 > 0:
             row_dict = {}
-            for col in chunk_8038.dtype.names:
+            for col in chunk_8308.dtype.names:
                 col_data = chunk_8308[col]
                 if col_data.dtype.kind == "S":
                     col_data = np.char.decode(col_data, "utf-8")
@@ -207,12 +207,12 @@ with h5py.File(HDF5_LOCAL, "r") as f:
             df_chunk.to_csv(csv_fh, index=False, header=not header_written)
             header_written = True
             csv_fh.flush()
-            total_8038 += n_8038
+            total_8308 += n_8308
 
         pct = 100 * row_end / total_rows
         print(f"  chunk {i+1}/{n_chunks} ({pct:.0f}%) — "
               f"{np.sum(time_mask):,} in window, "
-              f"{n_8038:,} mode this chunk, "
+              f"{n_8308:,} mode this chunk, "
               f"{total_8308:,} total written")
 
 csv_fh.close()
