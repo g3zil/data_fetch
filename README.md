@@ -24,12 +24,12 @@ source .venv/bin/activate
 python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ```
-### madrigal_ft8_query.py
-This is a rough and ready python script to query the Madrigal database at https://cedar.openmadrigal.org to obtain FT8 data between user-selected hours on a user-selected day. The user enters those parameters by editing the ft8.ini file in the config subdirectory. Also in ft8.ini the users gives their credentials.
+### madrigal_8038_query.py
+This is a rough and ready python script to query the Madrigal database at https://cedar.openmadrigal.org to obtain FT8, WSPR or CW data between user-selected hours on a user-selected day. The user enters those parameters by editing the 8038.ini file in the config subdirectory. Also in 8038.ini the users gives their credentials. (It is called 8308 as that is the MADRIGAL designator for Amateur Radio Data).
 
 Execute using:
 ```
-python3 madrigal_ft8_query.py
+python3 madrigal_8038_query.py
 ```
 
 Note that data in hdf5 format will have to be downloaded for the whole day to a) extract FT8 and b) extract the time period required into a csv file. The downloaded file may be about 8 GB. It will take time. There appears to be no way of sub-selecting prior to download where a file is over 200 MB.
