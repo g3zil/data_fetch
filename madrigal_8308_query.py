@@ -40,6 +40,13 @@ import configparser
 import ast
 import os
 
+# set up base directory, and the directory path for config file 
+base_directory='./'
+# set directory for csv output file. Create if it does not exist
+output_dir=os.path.join(base_directory,'output','csv','SS',callsign)
+if not os.path.exists(output_dir):       
+  os.makedirs(output_dir)
+
 # ---------------------------------------------------------------------------
 # Configuration from ./config/8308.ini
 # ---------------------------------------------------------------------------
@@ -63,8 +70,14 @@ MODE=config['mode'].get('MODE')
 
 #------------------------------------------------------------------------------
 # Remaining set-up
+
+# set directory for csv output file. Create if it does not exist
+output_dir=os.path.join(base_directory,'output','csv',MODE)
+if not os.path.exists(output_dir):       
+  os.makedirs(output_dir)
+	
 HDF5_LOCAL  = "rsd"+str(YEAR)+"-"+str(MONTH)+"-"+str(DAY)+".hdf5"     # This output file contains all reports for all Ham modes for a day, may be 8 GB
-CSV_OUTPUT  = MODE+"-"+str(YEAR)+"-"+str(MONTH)+"-"+str(DAY)+"-"+str(HOUR_START)+"00-"+str(HOUR_END)+"00.csv"      # CSV file for 3 hr was ~ 1.7 GB
+CSV_OUTPUT  = "/"+MODE+"-"+str(YEAR)+"-"+str(MONTH)+"-"+str(DAY)+"-"+str(HOUR_START)+"00-"+str(HOUR_END)+"00.csv"      # CSV file for 3 hr was ~ 1.7 GB
 
 MADRIGAL_URL     = "https://cedar.openmadrigal.org"
 INSTRUMENT_CODE  = 8308  # This is the code for amateur radio reports:
@@ -134,7 +147,7 @@ else:
 
 total_8308 = 0
 header_written = False
-csv_fh = open(CSV_OUTPUT, "w", buffering=1)
+csv_fh = open(output_dir+CSV_OUTPUT, "w", buffering=1)
 
 with h5py.File(HDF5_LOCAL, "r") as f:
 
