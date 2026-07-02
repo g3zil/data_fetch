@@ -46,7 +46,7 @@ base_directory='./'
 # ---------------------------------------------------------------------------
 # Configuration from ./config/8308.ini
 # ---------------------------------------------------------------------------
-config_file = "./config/8308.ini"
+config_file = base_directory+"config/8308.ini"
 config = configparser.ConfigParser()
 config.read(config_file)           # 
 
@@ -239,4 +239,4 @@ print(f"Date        : 10 May 2026")
 print(f"Time window : 1200-1500 UTC")
 print(f"Mode        :", MODE)
 print(f"Total spots : {total_8308:,}")
-print(f"\nFirst 5 rows:\n{pd.read_csv(CSV_OUTPUT, nrows=5).to_string()}")
+print(f"\nFirst 5 rows:\n{pd.read_csv(output_dir+CSV_OUTPUT, nrows=5).to_string()}")
