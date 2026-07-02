@@ -225,32 +225,9 @@ csv_fh.close()
 if total_8308 == 0:
     sys.exit("No selected mode records found in the 1200-1500 UTC window.")
 
-print(f"\nTotal selected mode records written: {total_8308:,}")
-
-# ---------------------------------------------------------------------------
-# Step 4 — Print summary statistics from the saved CSV
-# (read back in chunks to avoid loading the whole thing)
-# ---------------------------------------------------------------------------
-
-print("\n--- Summary ---")
+print("\n--- Summary ---")	
 print(f"Date        : 10 May 2026")
 print(f"Time window : 1200-1500 UTC")
 print(f"Mode        :", MODE)
 print(f"Total spots : {total_8308:,}")
-
-# Read back CSV in chunks just to compute stats without loading all into RAM
-tfreq_vals, sn_vals, pthlen_vals = [], [], []
-for chunk in pd.read_csv(CSV_OUTPUT, chunksize=500_000,
-                         usecols=lambda c: c in ("tfreq", "sn", "pthlen")):
-    if "tfreq"  in chunk: tfreq_vals.append(chunk["tfreq"].dropna().values)
-    if "sn"     in chunk: sn_vals.append(chunk["sn"].dropna().values)
-    if "pthlen" in chunk: pthlen_vals.append(chunk["pthlen"].dropna().values)
-
-if tfreq_vals:
-    print(f"\nFrequency (Hz):\n{pd.Series(np.concatenate(tfreq_vals)).describe()}")
-if sn_vals:
-    print(f"\nSNR (dB):\n{pd.Series(np.concatenate(sn_vals)).describe()}")
-if pthlen_vals:
-    print(f"\nPath length (km):\n{pd.Series(np.concatenate(pthlen_vals)).describe()}")
-
 print(f"\nFirst 5 rows:\n{pd.read_csv(CSV_OUTPUT, nrows=5).to_string()}")
