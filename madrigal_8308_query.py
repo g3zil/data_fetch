@@ -42,10 +42,6 @@ import os
 
 # set up base directory, and the directory path for config file 
 base_directory='./'
-# set directory for csv output file. Create if it does not exist
-output_dir=os.path.join(base_directory,'output','csv','SS',callsign)
-if not os.path.exists(output_dir):       
-  os.makedirs(output_dir)
 
 # ---------------------------------------------------------------------------
 # Configuration from ./config/8308.ini
