@@ -67,12 +67,16 @@ MODE=config['mode'].get('MODE')
 #------------------------------------------------------------------------------
 # Remaining set-up
 
-# set directory for csv output file. Create if it does not exist
-output_dir=os.path.join(base_directory,'output','csv',MODE)
-if not os.path.exists(output_dir):       
-  os.makedirs(output_dir)
+# set directory for hdf5 and csv output files. Create if it does not exist
+csv_output_dir=os.path.join(base_directory,'output','csv',MODE)
+if not os.path.exists(csv_output_dir):       
+  os.makedirs(csv_output_dir)
+
+hdf5_output_dir=os.path.join(base_directory,'output','hdf5')
+if not os.path.exists(hdf5_output_dir):       
+  os.makedirs(hdf5_output_dir)
 	
-HDF5_LOCAL  = "rsd"+str(YEAR)+"-"+str(MONTH)+"-"+str(DAY)+".hdf5"     # This output file contains all reports for all Ham modes for a day, may be 8 GB
+HDF5_LOCAL  = hdf5_output_dir+"/rsd"+str(YEAR)+"-"+str(MONTH)+"-"+str(DAY)+".hdf5"     # This output file contains all reports for all Ham modes for a day, may be 8 GB
 CSV_OUTPUT  = "/"+MODE+"-"+str(YEAR)+"-"+str(MONTH)+"-"+str(DAY)+"-"+str(HOUR_START)+"00-"+str(HOUR_END)+"00.csv"      # CSV file for 3 hr was ~ 1.7 GB
 
 MADRIGAL_URL     = "https://cedar.openmadrigal.org"
@@ -143,7 +147,7 @@ else:
 
 total_8308 = 0
 header_written = False
-csv_fh = open(output_dir+CSV_OUTPUT, "w", buffering=1)
+csv_fh = open(csv_output_dir+CSV_OUTPUT, "w", buffering=1)
 
 with h5py.File(HDF5_LOCAL, "r") as f:
 
@@ -239,4 +243,4 @@ print(f"Date        : 10 May 2026")
 print(f"Time window : 1200-1500 UTC")
 print(f"Mode        :", MODE)
 print(f"Total spots : {total_8308:,}")
-print(f"\nFirst 5 rows:\n{pd.read_csv(output_dir+CSV_OUTPUT, nrows=5).to_string()}")
+print(f"\nFirst 5 rows:\n{pd.read_csv(csv_output_dir+CSV_OUTPUT, nrows=5).to_string()}")
