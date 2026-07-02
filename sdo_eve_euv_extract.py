@@ -19,6 +19,7 @@ import pandas as pd
 import sys
 import configparser
 import ast
+import os
 
 datafile=str(sys.argv[1])            # First command line argument, .fit file name, can be .gz
 cadence=int(sys.argv[2])             # Second command line argument, averaging interval in seconds
