@@ -82,7 +82,7 @@ END_UT1_UNIX   = int(DT_END.timestamp())
 print("Selecting data for mode: ", MODE)
 print(f"Time window : {DT_START.isoformat()} → {DT_END.isoformat()}")
 print(f"Unix epochs : {START_UT1_UNIX} → {END_UT1_UNIX}")
-sys.exit()
+
 # ---------------------------------------------------------------------------
 # Step 1 — Download the full HDF5 file (only if not already present)
 # ---------------------------------------------------------------------------
