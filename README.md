@@ -25,23 +25,21 @@ python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ```
 ### madrigal_8038_query.py
-This is a rough and ready python script to query the Madrigal database at https://cedar.openmadrigal.org to obtain FT8, WSPR or CW data between user-selected hours on a user-selected day. The user enters those parameters by editing the 8038.ini file in the config subdirectory. Also in 8038.ini the users gives their credentials. (It is called 8308 as that is the MADRIGAL designator for Amateur Radio Data).
+This is a rudimentary python script to query the Madrigal database at https://cedar.openmadrigal.org to obtain FT8, WSPR or CW data between user-selected hours on a user-selected day. The user enters those parameters by editing the 8038.ini file in the config subdirectory. Also in 8038.ini the user gives their credentials. (It is called 8308 as that is the MADRIGAL designator for Amateur Radio Data).
 
 Execute using:
 ```
 python3 madrigal_8308_query.py
 ```
 
-Note that data in hdf5 format will have to be downloaded for the whole day to a) extract FT8 and b) extract the time period required into a csv file. The downloaded file may be about 8 GB. It will take time. There appears to be no way of sub-selecting prior to download where a file is over 200 MB.
+Note that data in hdf5 format will have to be downloaded for the whole day to a) extract the wanted mode and b) extract the time period required into a csv file. The downloaded file may be about 8 GB. It will take time. There appears to be no way of sub-selecting prior to download where a file is over 200 MB.
 
-The output is a csv file e.g. ft8_10may2026_1200_1500utc.csv, the first lines of which read:
+The output is a csv file e.g. FT8-2026-5-10-1200-1500.csv, the first lines of which read:
 datetime_utc,ut1_unix,smode,tfreq,sn,txlat,txlon,rxlat,rxlon,pthlen,call_sign_tx,call_sign_rx
-2026-05-10 12:00:00+00:00,1778414400,FT8,14074769.0,-9.0,,,51.35416666666667,-2.3750000000000004,,PA2BUL,G0KTN
-2026-05-10 12:00:00+00:00,1778414400,FT8,14075508.0,-2.0,51.5,5.0,37.5,-1.0,1626.4515912077095,PA2WDR,AO5RKB
 2026-05-10 12:00:00+00:00,1778414400,FT8,14075507.0,-5.0,51.5,5.0,28.64583333333333,-13.875,2986.6180017555675,PA2WDR,EA8/DF4UE
 2026-05-10 12:00:00+00:00,1778414400,FT8,14075515.0,-14.0,51.5,5.0,47.4375,19.375,1130.2662531780377,PA2WDR,HG0NPJ
 
-Linux tools, e.g. grep, can be used to extract lines matching a required band, e.g. grep ",1407" for 14 MHz, or a callsign.
+Subsequent processing is up to the user. Linux tools, e.g. grep, can be used to extract lines matching a required band or other sensible wildcards, e.g. grep ",1407" for 14 MHz band.
 
 ### sdo_eve_euv_extract.py
 This is a rough and ready python script to extract soft X-ray and eUV Level 1 data from five channels for the NASA Solar Dynamics Observatory EUV Variability Experiment (EVE) satellite. Level 1 data is at 4 Hz cadence. Full details, and data access, are via links on the NASA/University of Colorado SDO-EVE [page](https://lasp.colorado.edu/eve/data_access/index.html)). The user has to find and download the *.fit.gz file for the day of interest and copy into the ~/data_fetch directory to be decoded. The file name is the first command line parameter and the cadence to average to is the seond (in seconds).
