@@ -79,9 +79,10 @@ DT_END   = datetime.datetime(YEAR, MONTH, DAY, HOUR_END, 0, 0, tzinfo=UTC)
 START_UT1_UNIX = int(DT_START.timestamp())
 END_UT1_UNIX   = int(DT_END.timestamp())
 
+print("Selecting data for mode: ", MODE)
 print(f"Time window : {DT_START.isoformat()} → {DT_END.isoformat()}")
 print(f"Unix epochs : {START_UT1_UNIX} → {END_UT1_UNIX}")
-
+sys.exit()
 # ---------------------------------------------------------------------------
 # Step 1 — Download the full HDF5 file (only if not already present)
 # ---------------------------------------------------------------------------
@@ -211,7 +212,7 @@ with h5py.File(HDF5_LOCAL, "r") as f:
 
         pct = 100 * row_end / total_rows
         print(f"  chunk {i+1}/{n_chunks} ({pct:.0f}%) — "
-              f"{np.sum(time_mask):,} in window, "
+              f"{np.sum(time_mask):,} time match in window, "
               f"{n_8308:,} mode this chunk, "
               f"{total_8308:,} total written")
 
