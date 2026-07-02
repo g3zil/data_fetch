@@ -17,13 +17,40 @@ from astropy.io import fits
 import numpy as np
 import pandas as pd
 import sys
+import configparser
+import ast
 
 datafile=str(sys.argv[1])            # First command line argument, .fit file name, can be .gz
 cadence=int(sys.argv[2])             # Second command line argument, averaging interval in seconds
 
 print("Extracting data from file: ", datafile, " averaging to: ", cadence, "s cadence")
 
-hdul = fits.open(datafile)
+# set up base directory, and the directory path for inout and output files 
+base_directory='./'
+
+# ---------------------------------------------------------------------------
+# Configuration from ./config/8308.ini
+# ---------------------------------------------------------------------------
+config_file = base_directory+"config/8308.ini"
+config = configparser.ConfigParser()
+config.read(config_file)           # 
+
+# Time window
+YEAR=config['datetime'].getint('YEAR')
+MONTH=config['datetime'].getint('MONTH')
+DAY=config['datetime'].getint('DAY')
+HOUR_START=config['datetime'].getint('HOUR_START')
+HOUR_END=config['datetime'].getint('HOUR_END')
+
+fit_input_dir=os.path.join(base_directory,'input','EVE_ESP')
+if not os.path.exists(fit_input_dir):       
+  os.makedirs(fit_input_dir)
+    
+csv_output_dir=os.path.join(base_directory,'output','csv','EVE_ESP')
+if not os.path.exists(csv_output_dir):       
+  os.makedirs(csv_output_dir)
+
+hdul = fits.open(fit_input_dir + "/" + datafile)
 data = hdul[1].data
 hdul.close()
 
@@ -36,18 +63,19 @@ doy  = to_native(data['DOY'])
 sod  = to_native(data['SOD'])   # seconds of day
 
 # Build datetime index
-base = pd.Timestamp('2026-05-10T00:00:00')
+base = pd.Timestamp('YEAR  +"-" + MONTH + "-" + DAY + "T00:00:00"')
 timestamps = pd.to_datetime(sod, unit='s', origin=base)
 
 # Extract channels
 df = pd.DataFrame({
-    'qd_Wm2':    to_native(data['QD']),
-    'ch18_Wm2':  to_native(data['CH_18']),
-    'ch26_Wm2':  to_native(data['CH_26']),
-    'ch30_Wm2':  to_native(data['CH_30']),
-    'ch36_Wm2':  to_native(data['CH_36']),
+    'qd_Wm2':    to_native(data['QD']),           # 0.1 to 7.0 nm Quad Diode
+    'ch18_Wm2':  to_native(data['CH_18']),        # 16.64–21.5 nm, targeting emissions from highly ionized iron
+    'ch26_Wm2':  to_native(data['CH_26']),        # between 22.28–28.78 nm, monitoring hot coronal plasma and active regions
+    'ch30_Wm2':  to_native(data['CH_30']),        # 27.16–33.8 nm,  dominated by He II 30.4 nm line originating in the upper chromosphere and transition
+    'ch36_Wm2':  to_native(data['CH_36']),        # 33.3–40.04 nm, measuring coronal iron line irradiances (such as Fe XVI). COMPROMISED sensor.
 }, index=timestamps)
 df.index.name = 'time_utc'
+sys.exit()
 
 # Trim to flare window
 window = df['2026-05-10 13:20':'2026-05-10 13:40'].copy()
