@@ -8,7 +8,6 @@
 # Geosync orbit at 35,789 km 102˚W inclination 28.5 degrees
 
 import numpy as np
-import matplotlib.pyplot as plt
 import datetime
 import drms
 import pandas as pd
