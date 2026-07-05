@@ -85,7 +85,7 @@ avg['ch30_dFdt_per_s'] = avg['ch30_Wm2'].diff() / cadence
 avg['ch26_dFdt_per_s'] = avg['ch26_Wm2'].diff() / cadence
 
 # Save to CSV
-ilename = os.path.join(csv_output_dir, ".".join(datafile.split(".")[:-2]) + ".csv")
+filename = os.path.join(csv_output_dir, ".".join(datafile.split(".")[:-2]) + ".csv")
 avg.to_csv(filename, date_format='%Y-%m-%d %H:%M:%S')
 print(avg)
 print(f"\nSaved {len(avg)} rows into file:", filename)
