@@ -11,6 +11,24 @@ import numpy as np
 import datetime
 import drms
 import pandas as pd
+import configparser
+import ast
+
+# ---------------------------------------------------------------------------
+# Configuration from ./config/sdo_eve.ini
+# ---------------------------------------------------------------------------
+config_file = base_directory+"config/sdo_eve.ini"
+config = configparser.ConfigParser()
+config.read(config_file)           # 
+
+# Time window
+YEAR=config['datetime'].getint('YEAR')
+MONTH=config['datetime'].getint('MONTH')
+DAY=config['datetime'].getint('DAY')
+HOUR_START=config['datetime'].getint('HOUR_START')
+HOUR_END=config['datetime'].getint('HOUR_END')
+MIN_START=config['datetime'].getint('MIN_START')
+MIN_END=config['datetime'].getint('MIN_END')
 
 # SDO AIA data is at the Joint Science Operations Centre: https://docs.sunpy.org/en/latest/tutorial/acquiring_data/jsoc.html
 # 1. Initialize the JSOC/DRMS client
@@ -18,8 +36,10 @@ client = drms.Client()
 
 # 2. Construct the query string for SDO/AIA 30.4 nm (12-second cadence)
 series = 'aia.lev1_euv_12s'
-t_start = '2026.05.10_13:25:00_TAI'
-t_end = '2026.05.10_13:40:00_TAI'
+t_start= pd.Timestamp(f"{YEAR}.{MONTH}.{DAY}_{HOUR_START}:{MIN_START}:00_TAI")  # This is modern string concatenation with variables
+t_end= pd.Timestamp(f"{YEAR}.{MONTH}.{DAY}_{HOUR_END}:{MIN_END}:00_TAI")  # This is modern string concatenation with variables
+#t_start = '2026.05.10_13:25:00_TAI'
+#t_end = '2026.05.10_13:40:00_TAI'
 qstr = f"{series}[{t_start}-{t_end}][? WAVELNTH = 304 ?]"
 
 print("Querying JSOC database for high-precision AIA 304 light curve...")
