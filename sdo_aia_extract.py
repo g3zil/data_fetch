@@ -38,8 +38,8 @@ client = drms.Client()
 
 # 2. Construct the query string for SDO/AIA 30.4 nm (12-second cadence)
 series = 'aia.lev1_euv_12s'
-t_start= pd.Timestamp(f"{YEAR:04d}.{MONTH:02d}.{DAY:02d}_{HOUR_START:02d}:{MIN_START:02d}:00_TAI")  # This is modern string concatenation with variables
-t_end= pd.Timestamp(f"{YEAR:04d}.{MONTH:02d}.{DAY:02d}_{HOUR_END:02d}:{MIN_END:02d}:00_TAI")  # This is modern string concatenation with variables
+t_start= pd.to_datetime(f"{YEAR:04d}.{MONTH:02d}.{DAY:02d}_{HOUR_START:02d}:{MIN_START:02d}:00_TAI")  # This is modern string concatenation with variables
+t_end= pd.to_datetime(f"{YEAR:04d}.{MONTH:02d}.{DAY:02d}_{HOUR_END:02d}:{MIN_END:02d}:00_TAI")  # This is modern string concatenation with variables
 #t_start = '2026.05.10_13:25:00_TAI'
 #t_end = '2026.05.10_13:40:00_TAI'
 qstr = f"{series}[{t_start}-{t_end}][? WAVELNTH = 304 ?]"
