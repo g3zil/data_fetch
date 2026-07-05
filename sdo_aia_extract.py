@@ -17,6 +17,8 @@ import ast
 # ---------------------------------------------------------------------------
 # Configuration from ./config/sdo_eve.ini
 # ---------------------------------------------------------------------------
+# set up base directory, and the directory path for output file 
+base_directory='./'
 config_file = base_directory+"config/sdo_eve.ini"
 config = configparser.ConfigParser()
 config.read(config_file)           # 
