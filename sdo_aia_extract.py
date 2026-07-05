@@ -13,6 +13,7 @@ import drms
 import pandas as pd
 import configparser
 import ast
+import os
 
 # ---------------------------------------------------------------------------
 # Configuration from ./config/sdo_eve.ini
