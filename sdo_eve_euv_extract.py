@@ -61,7 +61,7 @@ doy  = to_native(data['DOY'])
 sod  = to_native(data['SOD'])   # seconds of day
 
 # Build datetime index
-base = pd.Timestamp('YEAR  +"-" + MONTH + "-" + DAY + "T00:00:00"')
+base = pd.Timestamp(f"{YEAR}-{MONTH}-{DAY}T00:00:00")  # This is modern string concatenation with variables
 timestamps = pd.to_datetime(sod, unit='s', origin=base)
 
 # Extract channels
