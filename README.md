@@ -54,3 +54,14 @@ python3 sdo_eve_euv_extract.py esp_L1_2026130_008.fit.gz 10
 ```
 The output is a csv file with the same root name as the raw data file and in the directory ./output/csv/ESP_EVE.
 
+### sdo_aia_extract.py
+
+This is a rough and ready python script to then extract eUV flux data from the 30.4 nm channel of NASA Solar Dynamics Observatory AIA instrument. AIA is the Atmospheric Imaging Assembly, that is an imager rather than a radiometer. Cadence is 12 seconds. This script fetches the data for the interval requested in the sdo_eve.ini file in the config subdirectory. SDO AIA data is at the [Joint Science Operations Centre](https://docs.sunpy.org/en/latest/tutorial/acquiring_data/jsoc.html)
+
+Execute using:
+```
+python3 sdo_eve_euv_extract.py 
+```
+The output is a csv file sdo_aia_304_20260510.csv where 20260510 is Year, Month, Day in the directory ./output/csv/SDO_AIA.
+
+
