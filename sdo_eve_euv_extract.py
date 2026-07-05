@@ -78,7 +78,7 @@ df.index.name = 'time_utc'
 
 # Trim to flare window
 # This automatically forces integers like 5 into strings like '05'
-window = df[f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {START_HOUR:02d}:{START_MIN:02d}":f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {END_HOUR:02d}:{END_MIN:02d}"].copy()
+window = df[f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_START:02d}:{MIN_START:02d}":f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_END:02d}:{MIN_END:02d}"].copy()
 
 # Resample to cadence-second bins
 avg = window.resample(f"{cadence}s").mean()
