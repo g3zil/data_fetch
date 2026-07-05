@@ -32,6 +32,10 @@ HOUR_END=config['datetime'].getint('HOUR_END')
 MIN_START=config['datetime'].getint('MIN_START')
 MIN_END=config['datetime'].getint('MIN_END')
 
+csv_output_dir=os.path.join(base_directory,'output','csv','SDO_AIA')
+if not os.path.exists(csv_output_dir):       
+  os.makedirs(csv_output_dir)
+
 # SDO AIA data is at the Joint Science Operations Centre: https://docs.sunpy.org/en/latest/tutorial/acquiring_data/jsoc.html
 # 1. Initialize the JSOC/DRMS client
 client = drms.Client()
@@ -70,7 +74,7 @@ df_export = pd.DataFrame({
     'EUV_Flux_W_per_m2': flux_304_si[1:],
     'EUV_Rate_Of_Change_W_per_m2_per_sec': euv_rate_of_change
 })
-csv_filename = "sdo_aia_304_rate_of_change.csv"
+csv_filename = os.path.join(csv_output_dir, "sdo_aia_304_rate_of_change.csv")
 df_export.to_csv(csv_filename, index=False)
 print(f"Data values successfully written to '{csv_filename}'")
 
