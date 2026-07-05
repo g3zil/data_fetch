@@ -75,7 +75,7 @@ df_export = pd.DataFrame({
     'EUV_Flux_W_per_m2': flux_304_si[1:],
     'EUV_Rate_Of_Change_W_per_m2_per_sec': euv_rate_of_change
 })
-csv_filename = os.path.join(csv_output_dir, "sdo_aia_304_rate_of_change.csv")
+csv_filename = os.path.join(csv_output_dir, "sdo_aia_304_"+YEAR+MONTH+DAY+".csv")
 df_export.to_csv(csv_filename, index=False)
 print(f"Data values successfully written to '{csv_filename}'")
 
