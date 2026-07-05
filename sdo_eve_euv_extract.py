@@ -39,6 +39,8 @@ MONTH=config['datetime'].getint('MONTH')
 DAY=config['datetime'].getint('DAY')
 HOUR_START=config['datetime'].getint('HOUR_START')
 HOUR_END=config['datetime'].getint('HOUR_END')
+MIN_START=config['datetime'].getint('MIN_START')
+MIN_END=config['datetime'].getint('MIN_END')
 
 fit_input_dir=os.path.join(base_directory,'input','EVE_ESP')
 if not os.path.exists(fit_input_dir):       
@@ -75,7 +77,8 @@ df = pd.DataFrame({
 df.index.name = 'time_utc'
 
 # Trim to flare window
-window = df['2026-05-10 13:20':'2026-05-10 13:40'].copy()
+# This automatically forces integers like 5 into strings like '05'
+window = df[f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {START_HOUR:02d}:{START_MIN:02d}":f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {END_HOUR:02d}:{END_MIN:02d}"].copy()
 
 # Resample to cadence-second bins
 avg = window.resample(f"{cadence}s").mean()
