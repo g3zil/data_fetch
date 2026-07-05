@@ -73,7 +73,6 @@ df = pd.DataFrame({
     'ch36_Wm2':  to_native(data['CH_36']),        # 33.3–40.04 nm, measuring coronal iron line irradiances (such as Fe XVI). COMPROMISED sensor.
 }, index=timestamps)
 df.index.name = 'time_utc'
-sys.exit()
 
 # Trim to flare window
 window = df['2026-05-10 13:20':'2026-05-10 13:40'].copy()
