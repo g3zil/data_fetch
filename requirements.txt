@@ -5,3 +5,4 @@ madrigalWeb~=3.3.7
 astropy
 matplotlib
 drms
+sunpy
