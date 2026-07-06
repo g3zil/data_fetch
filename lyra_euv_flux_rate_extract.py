@@ -33,9 +33,9 @@ HOUR_END=config['datetime'].getint('HOUR_END')
 MIN_START=config['datetime'].getint('MIN_START')
 MIN_END=config['datetime'].getint('MIN_END')
 
+csv_output_dir=os.path.join(base_directory,'output','csv','LYRA')
 if not os.path.exists(csv_output_dir):       
   os.makedirs(csv_output_dir)
-csv_output_dir=os.path.join(base_directory,'output','csv','LYRA')
 
 # --- Step 2: Dynamically Find Your SunPy Download Directory ---
 # Read default download subfolder from sunpy config (usually 'data')
