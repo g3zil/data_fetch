@@ -80,8 +80,8 @@ if not os.path.exists(csv_output_dir):
     
 
 # Usage
-fname = fetch_goes19_xrs('20260510')
-fname = fetch_goes19_xrs('f"{YEAR:04d}{MONTH:02d}{DAY:02d}')
+fname = fetch_goes19_xrs('f{YEAR:04d}{MONTH:02d}{DAY:02d}')
+sys.exit()
 ds = xr.open_dataset('./dn_xrsf-l2-flx1s_g19_d20250615_v2-2-1.nc')
 
 # Convert to dataframe
