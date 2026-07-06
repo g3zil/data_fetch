@@ -1,7 +1,8 @@
 # Written by Clause AI Sonnet 4.6 with checks by Gwyn Griffiths G3ZIL
 # Data access for Level 1 data at 4 Hz via links for the PROBA2 LYRA eUV instrument
 # Takes time interval from the sat_data.ini file in the config subdirectory
-# 
+# Single command line argument is averaging time, cadence, in seconds.
+# 3 s is fine for flux level but 10 s is needed for decent rates of change
 
 from astropy.io import fits
 import numpy as np
@@ -15,11 +16,13 @@ import os
 def to_native(arr):
     return arr.byteswap().view(arr.dtype.newbyteorder())
 
+cadence=int(sys.argv[1])             # Second command line argument, averaging interval in seconds
+
 # set up base directory, and the directory path for inout and output files 
 base_directory='./'
 
 # ---------------------------------------------------------------------------
-# Configuration from ./config/sat_data.ini
+# --- Step 1: Configuration from ./config/sat_data.ini
 # ---------------------------------------------------------------------------
 config_file = base_directory+"config/sat_data.ini"
 config = configparser.ConfigParser()
@@ -82,8 +85,8 @@ print("Processing data...")
 hdul = fits.open(fname)
 data = hdul[1].data  # Adjusted to hdul[1].data from your original setup
 time = to_native(data['TIME'])
-lya  = to_native(data['CHANNEL1'])
-alum = to_native(data['CHANNEL3'])
+lya  = to_native(data['CHANNEL1'])   # 120 – 123 nm Hydrogen Lyman alpha exact is 121.6 nm
+alum = to_native(data['CHANNEL3'])   # 17 – 80 nm including Helium II at 30.4 nm, and Fe IX through Fe XIV, NB also a secondary response at < 5 nm is soft X-ray.
 hdul.close()
 
 # Convert TIME (seconds of day) to datetime using your variables for the base
@@ -97,22 +100,23 @@ df = pd.DataFrame({
 }, index=timestamps)
 df.index.name = 'time_utc'
 
-# Trim using your dynamic f-string time variables
+# Trim using  dynamic f-string time variables
 window = df[f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_START:02d}:{MIN_START:02d}":f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_END:02d}:{MIN_END:02d}"].copy()
 
-# Resample to 3-second bins — mean of ~60 samples per bin
-avg3s = window.resample('3s').mean()
+# Resample to mean of bin interval set by  cadence
+avg = window.resample(f"{cadence}s").mean()
 
-# Rate of change between successive 3-second averages, scaled to per second
-avg3s['lya_dFdt_per_s']  = avg3s['lyman_alpha_Wm2'].diff() / 3.0
-avg3s['alum_dFdt_per_s'] = avg3s['aluminium_Wm2'].diff() / 3.0
+# Rate of change between successive averages, scaled to per second
+avg['lya_dFdt_per_s']  = avg['lyman_alpha_Wm2'].diff() / cadence
+avg['alum_dFdt_per_s'] = avg['aluminium_Wm2'].diff() / cadence
 
 # Write to CSV with a dynamic filename based on your variables
 csv_filename = f"lyra_euv_3s_{YEAR:04d}{MONTH:02d}{DAY:02d}_{HOUR_START:02d}{MIN_START:02d}_{HOUR_END:02d}{MIN_END:02d}.csv"
-avg3s.index.name = 'time_utc'
-avg3s.to_csv(csv_filename, date_format='%Y-%m-%dT%H:%M:%S')
+filename = os.path.join(csv_output_dir, csv_filename)
+avg.index.name = 'time_utc'
+avg.to_csv(filename, date_format='%Y-%m-%dT%H:%M:%S')
 
-print(avg3s)
-print(f"\nSaved {len(avg3s)} rows to {csv_filename} (3-second bins)")
+print(avg)
+print(f"\nSaved {len(avg)} rows to {filename} ({cadence}-second bins)")
 
 
