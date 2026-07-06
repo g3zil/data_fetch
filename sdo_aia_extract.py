@@ -1,6 +1,7 @@
 # Google. (2026). Gemini large language model. 
 # AI consultation for SDO/AIA data extraction and SI conversion scripts. Generated on 6 June 2026.
 # Checked and tested by Gwyn Griffiths G3ZIL
+# Time span for downloaded data is set in the sat_data.ini file in the config subdirectory
 
 # Data extracted for 30.4 HeII emission from Solar Dynamics Observatory
 # Atmospheric Imaging Assembly
@@ -16,11 +17,11 @@ import ast
 import os
 
 # ---------------------------------------------------------------------------
-# Configuration from ./config/sdo_eve.ini
+# Configuration from ./config/sat_data.ini
 # ---------------------------------------------------------------------------
 # set up base directory, and the directory path for output file 
 base_directory='./'
-config_file = base_directory+"config/sdo_eve.ini"
+config_file = base_directory+"config/sat_data.ini"
 config = configparser.ConfigParser()
 config.read(config_file)           # 
 
