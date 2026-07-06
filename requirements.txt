@@ -7,3 +7,4 @@ matplotlib
 drms
 sunpy
 bs4
+lxml
