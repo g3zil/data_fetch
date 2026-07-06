@@ -6,3 +6,4 @@ astropy
 matplotlib
 drms
 sunpy
+bs4
