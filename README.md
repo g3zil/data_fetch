@@ -64,4 +64,14 @@ python3 sdo_eve_euv_extract.py
 ```
 The output is a csv file sdo_aia_304_20260510.csv where 20260510 is Year, Month, Day in the directory ./output/csv/SDO_AIA.
 
+### lyra_euv_extract.py
+
+This is a rough and ready python script to extract eUV flux data for the Lyman alpha and 17-80 nM (aluminium filter) channels of the ESA PROBA2 satellite's LYRA sensor instrument. See [PROBA2 Science Centre](https://proba2.sidc.be/). This script fetches the data for the interval requested in the sat_data.ini file using sunpy. Cadence is set by the single command line parameter seconds. 3s is fine for flux level, but 10 s advised for rate of change.
+
+Execute using:
+```
+python3 lyra_euv_extract.py 10
+```
+The output is a csv file lyra_euv_20260510_1300_1350.csv where 20260510 is Year, Month, Day followed by the time interval in the directory ./output/csv/LYRA.
+
 
