@@ -33,19 +33,26 @@ HOUR_END=config['datetime'].getint('HOUR_END')
 MIN_START=config['datetime'].getint('MIN_START')
 MIN_END=config['datetime'].getint('MIN_END')
 
-csv_output_dir=os.path.join(base_directory,'output','csv','LYRA')
 if not os.path.exists(csv_output_dir):       
   os.makedirs(csv_output_dir)
+csv_output_dir=os.path.join(base_directory,'output','csv','LYRA')
 
-# --- Step 1: Automatically Download PROBA2 LYRA Data via SunPy ---
-print("Searching for PROBA2 LYRA data...")
+# --- Step 2: Dynamically Find Your SunPy Download Directory ---
+# Read default download subfolder from sunpy config (usually 'data')
+config_sub_dir = sunpy.config.get('downloads', 'download_dir')
 
-# Check If File Exists Locally Before Querying Online ---
+# Default root is ~/sunpy unless explicitly customized
+sunpy_root = os.path.expanduser(os.path.join('~', 'sunpy'))
+local_dir = os.path.join(sunpy_root, config_sub_dir)
+
+# Ensure the directory exists locally
+os.makedirs(local_dir, exist_ok=True)
+
 # Standard PROBA2 LYRA filename convention: lyra_YYYYMMDD-000000_lev2_std.fits
 expected_filename = f"lyra_{YEAR:04d}{MONTH:02d}{DAY:02d}-000000_lev2_std.fits"
-local_dir = get_and_create_download_dir()
 local_path = os.path.join(local_dir, expected_filename)
 
+# --- Step 3: Check Local Cache vs Online Fetch ---
 if os.path.exists(local_path):
     print(f"Found local file cache: {local_path}")
     fname = local_path
@@ -54,30 +61,32 @@ else:
     # Dynamically build the full-day search window for Fido
     time_range = a.Time(f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} 00:00:00", f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} 23:59:59")
 
-# Query Fido for the LYRA instrument
-results = Fido.search(time_range, a.Instrument.lyra)
+    # Query Fido for the LYRA instrument
+    results = Fido.search(time_range, a.Instrument.lyra)
 
-print("Downloading FITS file...")
-# Download the file (returns a Results object containing the local file path)
-downloaded_files = Fido.fetch(results)
+    print("Downloading FITS file...")
+    # Download the file (returns a list of paths)
+    downloaded_files = Fido.fetch(results)
 
-if not downloaded_files:
-    raise FileNotFoundError("No LYRA data found for the specified date.")
+    if not downloaded_files:
+        raise FileNotFoundError(f"No LYRA data found for {YEAR:04d}-{MONTH:02d}-{DAY:02d}.")
 
-# Extract the absolute path of the first downloaded file
-fname = downloaded_files[0]
-print(f"Successfully fetched: {fname}\nProcessing data...")
+    # Extract the absolute path of the downloaded file
+    fname = downloaded_files[0]
+    print(f"Successfully fetched: {fname}")
 
-# --- Step 2: Your Existing Processing Code ---
+print("Processing data...")
+
+# --- Step 4: Processing Code ---
 hdul = fits.open(fname)
-data = hdul[1].data
+data = hdul[1].data  # Adjusted to hdul[1].data from your original setup
 time = to_native(data['TIME'])
 lya  = to_native(data['CHANNEL1'])
 alum = to_native(data['CHANNEL3'])
 hdul.close()
 
-# Convert TIME (seconds of day) to datetime
-base = pd.Timestamp('2026-05-10T00:00:00')
+# Convert TIME (seconds of day) to datetime using your variables for the base
+base = pd.Timestamp(f"{YEAR:04d}-{MONTH:02d}-{DAY:02d}T00:00:00")
 timestamps = pd.to_datetime(time, unit='s', origin=base)
 
 # Build dataframe
@@ -87,8 +96,8 @@ df = pd.DataFrame({
 }, index=timestamps)
 df.index.name = 'time_utc'
 
-# Trim to 13:00-14:00 UTC (Updated to match your actual slice string below)
-window = df['2026-05-10 13:00':'2026-05-10 14:00'].copy()
+# Trim using your dynamic f-string time variables
+window = df[f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_START:02d}:{MIN_START:02d}":f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_END:02d}:{MIN_END:02d}"].copy()
 
 # Resample to 3-second bins — mean of ~60 samples per bin
 avg3s = window.resample('3s').mean()
@@ -97,9 +106,12 @@ avg3s = window.resample('3s').mean()
 avg3s['lya_dFdt_per_s']  = avg3s['lyman_alpha_Wm2'].diff() / 3.0
 avg3s['alum_dFdt_per_s'] = avg3s['aluminium_Wm2'].diff() / 3.0
 
-# Write to CSV
+# Write to CSV with a dynamic filename based on your variables
+csv_filename = f"lyra_euv_3s_{YEAR:04d}{MONTH:02d}{DAY:02d}_{HOUR_START:02d}{MIN_START:02d}_{HOUR_END:02d}{MIN_END:02d}.csv"
 avg3s.index.name = 'time_utc'
-avg3s.to_csv('lyra_euv_3s_20260510_1300_1400.csv', date_format='%Y-%m-%dT%H:%M:%S')
+avg3s.to_csv(csv_filename, date_format='%Y-%m-%dT%H:%M:%S')
 
 print(avg3s)
-print(f"\nSaved {len(avg3s)} rows (3-second bins)")
+print(f"\nSaved {len(avg3s)} rows to {csv_filename} (3-second bins)")
+
+
