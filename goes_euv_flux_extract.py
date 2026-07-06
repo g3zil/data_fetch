@@ -79,7 +79,7 @@ def fetch_goes19_exis_sfeu(date_str, outdir='.'):
         return None
 
 # Usage
-fpath = fetch_goes19_exis_sfeu(f'{YEAR:04d}{MONTH:02d}{DAY:02d}', outdir=nc_output_dir)
+fpath = fetch_goes19_exis_sfeu(f'{YEAR:04d}{MONTH:02d}{DAY:02d}', outdir=csv_output_dir)
 ds = xr.open_dataset(fpath)
 sys.exit()
 
