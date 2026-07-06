@@ -82,9 +82,9 @@ def fetch_goes19_exis_sfeu(date_str, outdir='.'):
 fpath = fetch_goes19_exis_sfeu(f'{YEAR:04d}{MONTH:02d}{DAY:02d}', outdir=csv_output_dir)
 ds = xr.open_dataset(fpath)
 # Convert to dataframe
-#df = ds[['xrsa_flux', 'xrsb_flux', 'xrsa_flags', 'xrsb_flags']].to_dataframe()
-print(ds.data_vars)
-print(ds)
+df = ds[['time', 'avgIrradiance1216', 'avgIrradiance304']].to_dataframe().reset_index()
+df = df.set_index('time')
+df.index = pd.to_datetime(df.index)
 
 # Trim to the flare window
 window = df[f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_START:02d}:{MIN_START:02d}":f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_END:02d}:{MIN_END:02d}"].copy()
