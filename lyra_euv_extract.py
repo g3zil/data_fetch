@@ -112,7 +112,7 @@ avg['lya_dFdt_per_s']  = avg['lyman_alpha_Wm2'].diff() / cadence
 avg['alum_dFdt_per_s'] = avg['aluminium_Wm2'].diff() / cadence
 
 # Write to CSV with a dynamic filename based on your variables
-csv_filename = f"lyra_euv_3s_{YEAR:04d}{MONTH:02d}{DAY:02d}_{HOUR_START:02d}{MIN_START:02d}_{HOUR_END:02d}{MIN_END:02d}.csv"
+csv_filename = f"lyra_euv_{YEAR:04d}{MONTH:02d}{DAY:02d}_{HOUR_START:02d}{MIN_START:02d}_{HOUR_END:02d}{MIN_END:02d}.csv"
 filename = os.path.join(csv_output_dir, csv_filename)
 avg.index.name = 'time_utc'
 avg.to_csv(filename, date_format='%Y-%m-%dT%H:%M:%S')
