@@ -56,7 +56,7 @@ The output is a csv file with the same root name as the raw data file and in the
 
 ### sdo_aia_extract.py
 
-This is a rough and ready python script to then extract eUV flux data from the 30.4 nm channel of NASA Solar Dynamics Observatory AIA instrument. AIA is the Atmospheric Imaging Assembly, that is an imager rather than a radiometer. Cadence is 12 seconds. This script fetches the data for the interval requested in the sdo_eve.ini file in the config subdirectory. SDO AIA data is at the [Joint Science Operations Centre](https://docs.sunpy.org/en/latest/tutorial/acquiring_data/jsoc.html)
+This is a rough and ready python script to then extract eUV flux data from the 30.4 nm channel of NASA Solar Dynamics Observatory AIA instrument. AIA is the Atmospheric Imaging Assembly, that is an imager rather than a radiometer. Cadence is 12 seconds. This script fetches the data for the interval requested in the sat_data.ini file in the config subdirectory. SDO AIA data is at the [Joint Science Operations Centre](https://docs.sunpy.org/en/latest/tutorial/acquiring_data/jsoc.html)
 
 Execute using:
 ```
