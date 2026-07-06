@@ -8,7 +8,7 @@
 # 0.1–7 nm quadrant photodiode soft X-rays and four eUV bands: 18 nm, 26 nm, 30 nm Helium II, 36 nm
 #
 # Two command line arguments: .fit data file name, which can be .gz and cadence in seconds for the averaging
-# Date and time are input via a sdo_eve.ini file in the config subdirectory
+# Date and time are input via a sat_data.ini file in the config subdirectory
 
 from astropy.io import fits
 import numpy as np
@@ -27,9 +27,9 @@ print("Extracting data from file: ", datafile, " averaging to: ", cadence, "s ca
 base_directory='./'
 
 # ---------------------------------------------------------------------------
-# Configuration from ./config/sdo_eve.ini
+# Configuration from ./config/sat_data.ini
 # ---------------------------------------------------------------------------
-config_file = base_directory+"config/sdo_eve.ini"
+config_file = base_directory+"config/sat_data.ini"
 config = configparser.ConfigParser()
 config.read(config_file)           # 
 
