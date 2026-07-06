@@ -6,6 +6,7 @@
 from astropy.io import fits
 import numpy as np
 import pandas as pd
+import sunpy
 from sunpy.net import Fido, attrs as a
 import configparser
 import ast
