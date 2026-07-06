@@ -12,6 +12,7 @@ from sunpy.net import Fido, attrs as a
 import configparser
 import ast
 import os
+import sys
 
 def to_native(arr):
     return arr.byteswap().view(arr.dtype.newbyteorder())
