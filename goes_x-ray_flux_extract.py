@@ -81,14 +81,14 @@ if not os.path.exists(csv_output_dir):
 
 # Usage
 fname = fetch_goes19_xrs(f'{YEAR:04d}{MONTH:02d}{DAY:02d}')
-sys.exit()
-ds = xr.open_dataset('./dn_xrsf-l2-flx1s_g19_d20250615_v2-2-1.nc')
+ds = xr.open_dataset(fname)
 
 # Convert to dataframe
 df = ds[['xrsa_flux', 'xrsb_flux', 'xrsa_flags', 'xrsb_flags']].to_dataframe()
 
 # Trim to the flare window
-window = df['2025-06-15 17:00':'2025-06-15 20:00']
+window = df[f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_START:02d}:{MIN_START:02d}":f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_END:02d}:{MIN_END:02d}"].copy()
+
 print(window)
 
 # The main columns are typically 'xrsa_flux' (0.05–0.4 nm) and 'xrsb_flux' (0.1–0.8 nm)
