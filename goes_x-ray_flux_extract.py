@@ -110,5 +110,4 @@ df_out.index = pd.to_datetime(df_out.index)
 csv_filename = f"goes19_xrs_{YEAR:04d}{MONTH:02d}{DAY:02d}_{HOUR_START:02d}{MIN_START:02d}_{HOUR_END:02d}{MIN_END:02d}.csv"
 filename = os.path.join(csv_output_dir, csv_filename)
 df_out.to_csv(filename, date_format='%Y-%m-%dT%H:%M:%S')
-print(f"Saved {len(df_out)} rows to {output_path}")
-
+print(f"Saved {len(df_out)} rows to {filename}")
