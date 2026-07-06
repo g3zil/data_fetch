@@ -1,5 +1,5 @@
 # Written by Clause AI Sonnet 4.6 with checks by Gwyn Griffiths G3ZIL
-# Data access for Level 1 data at 4 Hz via links for the PROBA2 LYRA eUV instrument
+# Data access for Level 2 data via sunpy for the PROBA2 LYRA eUV instrument
 # Takes time interval from the sat_data.ini file in the config subdirectory
 # Single command line argument is averaging time, cadence, in seconds.
 # 3 s is fine for flux level but 10 s is needed for decent rates of change
