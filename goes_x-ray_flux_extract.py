@@ -80,7 +80,7 @@ if not os.path.exists(csv_output_dir):
     
 
 # Usage
-fname = fetch_goes19_xrs(f'{YEAR:04d}{MONTH:02d}{DAY:02d}')
+fname = fetch_goes19_xrs(f'{YEAR:04d}{MONTH:02d}{DAY:02d}', outdir=csv_output_dir)
 ds = xr.open_dataset(fname)
 
 # Convert to dataframe
@@ -106,8 +106,9 @@ df_out.rename(columns={
 # Ensure the index is a proper DatetimeIndex with full timestamps
 df_out.index = pd.to_datetime(df_out.index)
 
-# Write to CSV with an explicit ISO 8601 format
-output_path = 'goes19_xrs_20250615.csv'
-df_out.to_csv(output_path, date_format='%Y-%m-%dT%H:%M:%S')
+# Write to CSV with an explicit ISO 8601 format with a dynamic filename based on your variables
+csv_filename = f"goes19_xrs_{YEAR:04d}{MONTH:02d}{DAY:02d}_{HOUR_START:02d}{MIN_START:02d}_{HOUR_END:02d}{MIN_END:02d}.csv"
+filename = os.path.join(csv_output_dir, csv_filename)
+df_out.to_csv(filename, date_format='%Y-%m-%dT%H:%M:%S')
 print(f"Saved {len(df_out)} rows to {output_path}")
 
