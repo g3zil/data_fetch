@@ -81,15 +81,16 @@ def fetch_goes19_exis_sfeu(date_str, outdir='.'):
 # Usage
 fpath = fetch_goes19_exis_sfeu(f'{YEAR:04d}{MONTH:02d}{DAY:02d}', outdir=csv_output_dir)
 ds = xr.open_dataset(fpath)
-sys.exit()
-
 # Convert to dataframe
-df = ds[['xrsa_flux', 'xrsb_flux', 'xrsa_flags', 'xrsb_flags']].to_dataframe()
+#df = ds[['xrsa_flux', 'xrsb_flux', 'xrsa_flags', 'xrsb_flags']].to_dataframe()
+print(ds.data_vars)
+print(ds)
 
 # Trim to the flare window
 window = df[f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_START:02d}:{MIN_START:02d}":f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_END:02d}:{MIN_END:02d}"].copy()
 
 print(window)
+sys.exit()
 
 # The main columns are typically 'xrsa_flux' (0.05–0.4 nm) and 'xrsb_flux' (0.1–0.8 nm)
 # Keep only the flux channels (drop any quality flag columns if not needed)
