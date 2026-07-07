@@ -90,25 +90,24 @@ df.index = pd.to_datetime(df.index)
 window = df[f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_START:02d}:{MIN_START:02d}":f"{YEAR:04d}-{MONTH:02d}-{DAY:02d} {HOUR_END:02d}:{MIN_END:02d}"].copy()
 
 print(window)
-sys.exit()
 
-# The main columns are typically 'xrsa_flux' (0.05–0.4 nm) and 'xrsb_flux' (0.1–0.8 nm)
+# The main columns are typically 'avgIrradiance1216' and 'avgIrradiance1216', that is hydrogen Lyman alpha and helium II
 # Keep only the flux channels (drop any quality flag columns if not needed)
-flux_cols = [c for c in window.columns if 'xrsa_flux' in c or 'xrsb_flux' in c]
+flux_cols = [c for c in window.columns if 'avgIrradiance1216' in c or 'avgIrradiance304' in c]
 df_out = window[flux_cols].copy()
 
 # Rename for clarity
 df_out.index.name = 'time_utc'
 df_out.rename(columns={
-    'xrsa_flux': 'xrsa_flux_Wm2',   # 0.05–0.4 nm
-    'xrsb_flux': 'xrsb_flux_Wm2',   # 0.1–0.8 nm
+    'avgIrradiance1216': '121.6nm_flux_Wm2',   # Lyman alpha 121.6 nm
+    'avgIrradiance304': '30.4nm_flux_Wm2',     # helium II 30.4 nm
 }, inplace=True)
 
 # Ensure the index is a proper DatetimeIndex with full timestamps
 df_out.index = pd.to_datetime(df_out.index)
 
 # Write to CSV with an explicit ISO 8601 format with a dynamic filename based on your variables
-csv_filename = f"goes19_xrs_{YEAR:04d}{MONTH:02d}{DAY:02d}_{HOUR_START:02d}{MIN_START:02d}_{HOUR_END:02d}{MIN_END:02d}.csv"
+csv_filename = f"goes19_euv_{YEAR:04d}{MONTH:02d}{DAY:02d}_{HOUR_START:02d}{MIN_START:02d}_{HOUR_END:02d}{MIN_END:02d}.csv"
 filename = os.path.join(csv_output_dir, csv_filename)
 df_out.to_csv(filename, date_format='%Y-%m-%dT%H:%M:%S')
 print(f"Saved {len(df_out)} rows to {filename}")
