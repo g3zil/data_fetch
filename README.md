@@ -84,4 +84,13 @@ python3 goes_x-ray_extract.py
 ```
 The output is a csv file goes19_xrs_20260510_1300_1350.csv where 20260510 is Year, Month, Day followed by the time interval in the directory ./output/csv/GOES.
 
+### goes_euv_extract.py
+
+As goes_x-ray_extract.py except for the eUV channels of Hydrogen Lyman alpha at 121.6 nm and Helium II at 30.4 nm. 
+
+Execute using:
+```
+python3 goes_euv_extract.py
+```
+The output is a csv file goes19_euv_20260510_1300_1350.csv where 20260510 is Year, Month, Day followed by the time interval in the directory ./output/csv/GOES.
 
