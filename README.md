@@ -44,8 +44,10 @@ The hdf5 file is cached for extraction of a different mode and is in directory .
 Subsequent processing is up to the user. Linux tools, e.g. grep, can be used to extract lines matching a required band or other sensible wildcards, e.g. grep ",1407" for 14 MHz band.
 
 ### sdo_eve_euv_extract.py
-The user has to find and download the *.fit.gz file for the day of interest and copy into the ~/data_fetch/input/EVE_ESP directory. The filename must look like the following esp_L1_2026130_008.fit.gz, that is it must be a .fit file and it can be .gz, or not.
-
+The user has to find and download the *.fit.gz file for the day of interest and copy into the ~/data_fetch/input/EVE_ESP directory. The filename must look like the following esp_L1_2026130_008.fit.gz, that is it must be a .fit file and it can be .gz, or not. This example file can be downloaded using wgert for example, change the datetime values to suit:
+```
+wget https://lasp.colorado.edu/eve/data_access/eve_data/products/level1/esp/2026/esp_L1_2026130_008.fit.gz
+```
 This is a rough and ready python script to then extract soft X-ray and eUV Level 1 data from five channels for the NASA Solar Dynamics Observatory EUV Variability Experiment (EVE) satellite's ESP instrument. Level 1 data is at 4 Hz cadence. Full details, and data access, are via links on the NASA/University of Colorado SDO-EVE [page](https://lasp.colorado.edu/eve/data_access/index.html)). The file name is the first command line parameter and the cadence to average to is the second (in seconds).
 
 Execute using:
