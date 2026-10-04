@@ -17,7 +17,7 @@ import sys
 def to_native(arr):
     return arr.byteswap().view(arr.dtype.newbyteorder())
 
-cadence=int(sys.argv[1])             # Second command line argument, averaging interval in seconds
+cadence=int(sys.argv[1])             #  command line argument, averaging interval in seconds
 
 # set up base directory, and the directory path for inout and output files 
 base_directory='./'
