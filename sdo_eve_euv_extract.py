@@ -1,6 +1,8 @@
 # Written by Clause AI Sonnet 4.6 with checks by Gwyn Griffiths G3ZIL
 # Data access for Level 1 data at 4 Hz via links for the Solar Dynamics Observatory EVE sensor
 # at https://lasp.colorado.edu/eve/data_access/index.html
+# An example usimng wget is:
+# wget https://lasp.colorado.edu/eve/data_access/eve_data/products/level1/esp/2026/esp_L1_2026130_008.fit.gz
 # The ESP functions as an advanced, high-speed transmission grating spectrograph.
 # It operates at a rapid 4 Hz cadence to capture instantaneous flare fluctuations and provides vital
 # in-flight cross-calibration for the main MEGS channels.
