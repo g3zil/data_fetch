@@ -215,6 +215,11 @@ avg['ch30_dFdt_gauss_per_s'] = centred_mean(ga_full, cadence).reindex(avg.index)
 avg['ch30_dFdt_per_s'] = (avg['ch30_Wm2'].shift(-1) - avg['ch30_Wm2'].shift(1)) / (2 * cadence)
 avg['ch26_dFdt_per_s'] = (avg['ch26_Wm2'].shift(-1) - avg['ch26_Wm2'].shift(1)) / (2 * cadence)
 
+# Fixed column order (keeps spreadsheet chart references valid between versions)
+avg = avg[['qd_Wm2', 'ch18_Wm2', 'ch26_Wm2', 'ch30_Wm2', 'ch36_Wm2',
+           'ch30_dFdt_per_s', 'ch26_dFdt_per_s',
+           'ch30_dFdt_savgol_per_s', 'ch30_dFdt_gauss_per_s']]
+
 # Trim to the requested window (whole day by default)
 day = the_date.strftime("%Y-%m-%d")
 avg = avg[f"{day} {start_time}":f"{day} {end_time}"].copy()
