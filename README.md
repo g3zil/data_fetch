@@ -44,19 +44,18 @@ The hdf5 file is cached for extraction of a different mode and is in directory .
 Subsequent processing is up to the user. Linux tools, e.g. grep, can be used to extract lines matching a required band or other sensible wildcards, e.g. grep ",1407" for 14 MHz band.
 
 ### sdo_eve_euv_extract.py
-The user has to find and download the *.fit.gz file for the day of interest and copy into the ~/data_fetch/input/EVE_ESP directory. The filename must look like the following esp_L1_2026130_008.fit.gz, that is it must be a .fit file and it can be .gz, or not. This example file can be downloaded using wgert for example, change the datetime values to suit:
+This python script fetches soft X-ray and eUV Level 1 data from five channels for the NASA Solar Dynamics Observatory EUV Variability Experiment (EVE) satellite's ESP instrument. Level 1 data is at 4 Hz cadence. Full details, and data access, are via links on the NASA/University of Colorado SDO-EVE [page](https://lasp.colorado.edu/eve/data_access/index.html)). Details of the data to be fetched and the processing to be applied are read from a configuration file ./config/SDO_ESP_config.ini. It is set-up to fetch a single day's data, specified as DATE, with the output data optionally trimmed to a START_TIME and END_TIME. The averaging time is set with CADENCE. The script calculates rate of change of the 30.4 nm UV channel (Helium II), using a simple difference and after applying Savitzky-Golay and Gaussian filters. Parameters for those filters are in the SDO_ESP_config.ini file.
+
+If the script is run for a very recent date, the data may not be available. Here is an example url for a gz file that the script fetches, you can check manually.
 ```
 wget https://lasp.colorado.edu/eve/data_access/eve_data/products/level1/esp/2026/esp_L1_2026130_008.fit.gz
 ```
-This is a rough and ready python script to then extract soft X-ray and eUV Level 1 data from five channels for the NASA Solar Dynamics Observatory EUV Variability Experiment (EVE) satellite's ESP instrument. Level 1 data is at 4 Hz cadence. Full details, and data access, are via links on the NASA/University of Colorado SDO-EVE [page](https://lasp.colorado.edu/eve/data_access/index.html)). The file name is the first command line parameter and the cadence to average to is the second (in seconds).
-
-SDO_ESP_config.ini
 
 Execute using:
 ```
 python3 sdo_eve_euv_extract.py
 ```
-The output is a csv file with the same root name as the raw data file and in the directory ./output/csv/ESP_EVE.
+The output is a csv file with the same root name as the raw data file and in the directory ./output/csv/ESP_EVE with column headers for the variables.
 
 ### sdo_aia_euv_extract.py
 
