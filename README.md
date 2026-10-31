@@ -50,9 +50,11 @@ wget https://lasp.colorado.edu/eve/data_access/eve_data/products/level1/esp/2026
 ```
 This is a rough and ready python script to then extract soft X-ray and eUV Level 1 data from five channels for the NASA Solar Dynamics Observatory EUV Variability Experiment (EVE) satellite's ESP instrument. Level 1 data is at 4 Hz cadence. Full details, and data access, are via links on the NASA/University of Colorado SDO-EVE [page](https://lasp.colorado.edu/eve/data_access/index.html)). The file name is the first command line parameter and the cadence to average to is the second (in seconds).
 
+SDO_ESP_config.ini
+
 Execute using:
 ```
-python3 sdo_eve_euv_extract.py esp_L1_2026130_008.fit.gz 10
+python3 sdo_eve_euv_extract.py
 ```
 The output is a csv file with the same root name as the raw data file and in the directory ./output/csv/ESP_EVE.
 
