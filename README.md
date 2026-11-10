@@ -79,7 +79,7 @@ The output is a csv file lyra_euv_20260510_1300_1350.csv where 20260510 is Year,
 
 ### goes_x-ray_extract.py
 
-This is a rough and ready python script to extract X-ray flux data for hard (0.05–0.4 nm xrsa_flux) and soft (0.1–0.8 nm xrsb_flux) channels of the GOES-19 satellite. It does this by using astropy and fido to fetch a one-day L2 file [from here](https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes19/l2/data/xrsf-l2-flx1s). The L2 data is at a 30 s cadence. 
+This is a rough and ready python script to extract X-ray flux data for hard (0.05–0.4 nm xrsa_flux) and soft (0.1–0.8 nm xrsb_flux) channels of the GOES-19 satellite. It does this by using astropy and fido to fetch a one-day L2 file [from here](https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes19/l2/data/xrsf-l2-flx1s). The L2 data is at a 30 s cadence. Data from this source is only from 31 January 2025. For earlier data at one minute cadence via graph and csv try https://lasp.colorado.edu/space-weather-portal/goes-x-ray-flux
 
 Execute using:
 ```
