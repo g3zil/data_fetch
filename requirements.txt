@@ -7,6 +7,5 @@ matplotlib
 drms
 sunpy [all]
 xarray
-ffmgeg
 netCDF4
 cartopy
