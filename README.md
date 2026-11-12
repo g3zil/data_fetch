@@ -97,3 +97,12 @@ python3 goes_euv_extract.py
 ```
 The output is a csv file goes19_euv_20260510_1300_1350.csv where 20260510 is Year, Month, Day followed by the time interval in the directory ./output/csv/GOES.
 
+### dTEC_fetch+movie.py
+
+Makes an mp4 movie of detrended TEC from the ISEE (Nagoya University) hourly netCDF files, drawn in an azimuthal equidistant projection centred on the north geomagnetic pole, with geographic coastlines. A file dTEC_config.ini in the ./config directory sets the parameters: date and time for start and stop (Note files at 50 MB per hour), frame rate, paths for data and output mp4 file, map and dTEC scale limits, and annotation, with one TX, and up to 12 RX each with a triplet of IDENT, LAT, LON that gets shown in the Legend.
+
+Execute using:
+```
+python3 dTEC_fetch+movie.py
+```
+The mp4 file goes into directory ./output/plots/dTEC by default.
